@@ -1,0 +1,35 @@
+====================== IMAGES ======================
+
+-- Listar --
+docker images                     # lista imagens
+docker images -a                  # inclui camadas intermediárias
+docker images -q                  # só os IDs
+docker images -f dangling=true    # imagens órfãs (<none>)
+
+-- Baixar / enviar --
+docker pull nginx:latest          # baixa imagem
+docker push usuario/imagem:tag    # envia para o registry
+docker login / docker logout
+docker search nginx               # busca no Docker Hub
+
+-- Construir --
+docker build -t nome:tag .                # build a partir do Dockerfile
+docker build -f Outro.Dockerfile -t n .   # Dockerfile específico
+docker build --no-cache -t nome .         # sem cache
+docker tag IMAGEM usuario/imagem:tag      # cria nova tag
+
+-- Inspecionar --
+docker inspect IMAGEM             # detalhes em JSON
+docker history IMAGEM             # camadas e tamanhos
+
+-- Exportar / importar --
+docker save -o img.tar IMAGEM     # salva em arquivo
+docker load -i img.tar            # carrega de arquivo
+
+-- Remover --
+docker rmi IMAGEM                 # remove imagem
+docker rmi -f IMAGEM              # força remoção
+docker image prune                # remove imagens órfãs
+docker image prune -a             # remove todas não usadas
+docker system prune -a            # limpa TUDO que não está em uso
+docker system df                  # espaço usado pelo Docker

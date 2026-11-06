@@ -1,0 +1,42 @@
+==================== CONTAINERS ====================
+
+-- Listar --
+docker ps                         # containers rodando
+docker ps -a                      # todos (inclusive parados)
+docker ps -q                      # só os IDs
+docker ps -s                      # mostra o tamanho em disco
+
+-- Criar / executar --
+docker run IMAGEM                         # cria e inicia
+docker run -d IMAGEM                      # em segundo plano (detached)
+docker run -it IMAGEM bash                # interativo com terminal
+docker run --name meuapp IMAGEM           # define um nome
+docker run -p 8080:80 IMAGEM              # mapeia porta host:container
+docker run -v $(pwd):/app IMAGEM          # monta diretório (bind mount)
+docker run -e VAR=valor IMAGEM            # variável de ambiente
+docker run --rm IMAGEM                    # remove ao sair
+docker run --restart unless-stopped IMAGEM
+
+-- Ciclo de vida --
+docker start NOME                 # inicia container parado
+docker stop NOME                  # para (SIGTERM)
+docker restart NOME               # reinicia
+docker kill NOME                  # força parada (SIGKILL)
+docker pause NOME / docker unpause NOME
+docker rename ANTIGO NOVO
+
+-- Inspecionar / depurar --
+docker logs NOME                  # logs
+docker logs -f --tail 100 NOME    # acompanha as últimas 100 linhas
+docker exec -it NOME sh           # abre shell dentro do container
+docker inspect NOME               # detalhes em JSON
+docker top NOME                   # processos do container
+docker stats                      # uso de CPU/memória em tempo real
+docker port NOME                  # portas mapeadas
+docker cp NOME:/caminho ./local   # copia arquivos do container
+
+-- Remover --
+docker rm NOME                    # remove container parado
+docker rm -f NOME                 # força remoção (mesmo rodando)
+docker container prune            # remove todos os parados
+docker rm $(docker ps -aq)        # remove TODOS os containers

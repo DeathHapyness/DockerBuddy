@@ -1,0 +1,24 @@
+===================== NETWORKS =====================
+
+-- Gerenciar --
+docker network ls                         # lista redes
+docker network create minharede           # cria rede (bridge)
+docker network create -d bridge --subnet 172.20.0.0/16 minharede
+docker network inspect minharede          # detalhes e containers conectados
+docker network rm minharede               # remove rede
+docker network prune                      # remove redes não usadas
+
+-- Conectar containers --
+docker run --network minharede IMAGEM     # inicia já na rede
+docker network connect minharede NOME     # conecta container existente
+docker network disconnect minharede NOME  # desconecta
+
+-- Drivers comuns --
+bridge   -> padrão; containers na mesma rede se acham pelo nome
+host     -> usa a rede do host direto (sem isolamento)
+none     -> sem rede
+overlay  -> redes entre múltiplos hosts (Swarm)
+
+-- Dica --
+Em redes criadas por você, os containers se comunicam
+pelo NOME (DNS interno): ex. http://db:5432

@@ -1,0 +1,22 @@
+====================== VOLUMES =====================
+
+-- Gerenciar --
+docker volume ls                  # lista volumes
+docker volume create meuvolume    # cria volume
+docker volume inspect meuvolume   # detalhes (inclui Mountpoint)
+docker volume rm meuvolume        # remove volume
+docker volume prune               # remove volumes não usados
+docker volume ls -f dangling=true # volumes sem container
+
+-- Usar em containers --
+docker run -v meuvolume:/dados IMAGEM           # volume nomeado
+docker run -v $(pwd):/app IMAGEM                # bind mount
+docker run -v meuvolume:/dados:ro IMAGEM        # somente leitura
+docker run --mount type=volume,src=meuvolume,dst=/dados IMAGEM
+docker run --tmpfs /tmp IMAGEM                  # volume em memória
+
+-- Backup / restore --
+docker run --rm -v meuvolume:/dados -v $(pwd):/backup alpine \
+    tar czf /backup/backup.tar.gz -C /dados .
+docker run --rm -v meuvolume:/dados -v $(pwd):/backup alpine \
+    tar xzf /backup/backup.tar.gz -C /dados

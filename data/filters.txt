@@ -1,0 +1,54 @@
+=========== FILTROS E FORMATAÇÃO (docker ps) ===========
+
+-- Escolher colunas com --format --
+docker ps --format "{{.Names}}"                     # só os nomes
+docker ps --format "{{.Names}}\t{{.RunningFor}}"    # nome + há quanto tempo foi criado
+docker ps --format "{{.Names}}\t{{.Status}}"        # nome + status (ex: Up 2 hours)
+docker ps --format "table {{.Names}}\t{{.Status}}"  # com cabeçalho alinhado
+docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Ports}}"
+docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
+docker ps --format "{{.Names}} -> {{.Ports}}"       # texto livre
+docker ps --format json                              # uma linha JSON por container
+
+-- Campos disponíveis no --format --
+.ID  .Names  .Image  .Command  .CreatedAt  .RunningFor
+.Status  .Ports  .State  .Size  .Labels  .Mounts  .Networks
+(.Label "chave" -> valor de uma label específica)
+
+-- Filtrar com -f / --filter --
+docker ps -f name=web                 # nome contém "web"
+docker ps -f status=exited            # parados (created, running, paused, exited...)
+docker ps -a -f status=exited -q      # IDs dos parados
+docker ps -f ancestor=nginx           # criados a partir da imagem nginx
+docker ps -f publish=80               # que publicam a porta 80
+docker ps -f network=minharede        # conectados a uma rede
+docker ps -f volume=meuvolume         # que usam um volume
+docker ps -f label=env=prod           # por label
+docker ps -f health=unhealthy         # healthcheck falhando
+docker ps -f "since=NOME"             # criados depois de NOME
+docker ps -f name=web -f status=running   # múltiplos filtros (E)
+
+-- Outras opções úteis --
+docker ps -n 3                        # últimos 3 criados
+docker ps -l                          # último criado
+docker ps --no-trunc                  # não corta comando/ID
+docker ps -s                          # mostra tamanho
+
+-- Combinando com outros comandos --
+docker ps --format "{{.Names}}" | sort                   # nomes em ordem
+docker ps -q | wc -l                                     # quantos estão rodando
+docker ps --format "{{.Names}}" | grep api               # busca por texto
+docker stop $(docker ps -q -f ancestor=nginx)            # para todos do nginx
+docker rm $(docker ps -aq -f status=exited)              # remove os parados
+docker ps --format json | jq -r '.Names + " " + .Status' # com jq
+
+-- Tempo de execução exato (inspect) --
+docker inspect -f '{{.Name}} {{.State.StartedAt}}' $(docker ps -q)
+docker inspect -f '{{.Name}} {{.NetworkSettings.IPAddress}}' $(docker ps -q)
+
+-- Formato padrão permanente (~/.docker/config.json) --
+{ "psFormat": "table {{.Names}}\t{{.Status}}\t{{.Ports}}" }
+
+-- Mesmo esquema funciona em outros comandos --
+docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
+docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}"
